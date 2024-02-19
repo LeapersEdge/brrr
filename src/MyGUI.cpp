@@ -1,4 +1,6 @@
 #include "MyGUI.h"
+#include "imgui.h"
+#include <string>
 
 MyGUI::MyGUI(bool dark_theme)
     :
@@ -20,9 +22,10 @@ void MyGUI::Render()
     
     // setting up main windoow (dockable and main menu bar)
     Setup_Main_Docking_Window(&open_main_dockspace);
+    Show_Simboat_Data_Info();
 
-
-    //ImGui::ShowDemoWindow();
+    // ImGui::ShowDemoWindow();
+    
 
     // ---------------------------------
 
@@ -52,7 +55,9 @@ void MyGUI::Show_Main_Menu_Bar()
     {
         if (ImGui::BeginMenu("Settings"))
         {
-            ImGui::MenuItem("Nothing for now", "", false, false);
+            if (ImGui::MenuItem("Toggle Autorun"))
+                this->simboat_autorun ^= 1;
+
             ImGui::EndMenu();
         }
 
@@ -126,3 +131,86 @@ void MyGUI::Show_Main_Menu_Bar_View()
     }
 }
 
+void MyGUI::Show_Simboat_Data_Info()
+{
+    if (simboat_presenting_data == nullptr)
+        return;
+
+    ImGui::Begin("Simboat Data");
+   
+    ImGui::Text("Position:");
+    ImGui::Text("  X: ");
+    ImGui::SameLine();
+    ImGui::Text(std::to_string(simboat_presenting_data->position.x).c_str());
+    ImGui::Text("  Y: ");
+    ImGui::SameLine();
+    ImGui::Text(std::to_string(simboat_presenting_data->position.y).c_str());
+    ImGui::Text("  Z: ");
+    ImGui::SameLine();
+    ImGui::Text(std::to_string(simboat_presenting_data->position.z).c_str());
+
+    ImGui::Text("Velocity:");
+    ImGui::Text("  X: ");
+    ImGui::SameLine();
+    ImGui::Text(std::to_string(simboat_presenting_data->velocity.x).c_str());
+    ImGui::Text("  Y: ");
+    ImGui::SameLine();
+    ImGui::Text(std::to_string(simboat_presenting_data->velocity.y).c_str());
+    ImGui::Text("  Z: ");
+    ImGui::SameLine();
+    ImGui::Text(std::to_string(simboat_presenting_data->velocity.z).c_str());
+
+    ImGui::Text("Acceleration:");
+    ImGui::Text("  X: ");
+    ImGui::SameLine();
+    ImGui::Text(std::to_string(simboat_presenting_data->acceleration.x).c_str());
+    ImGui::Text("  Y: ");
+    ImGui::SameLine();
+    ImGui::Text(std::to_string(simboat_presenting_data->acceleration.y).c_str());
+    ImGui::Text("  Z: ");
+    ImGui::SameLine();
+    ImGui::Text(std::to_string(simboat_presenting_data->acceleration.z).c_str());
+
+    ImGui::Text("Rotation:");
+    ImGui::Text("  X: ");
+    ImGui::SameLine();
+    ImGui::Text(std::to_string(simboat_presenting_data->rotation.x).c_str());
+    ImGui::Text("  Y: ");
+    ImGui::SameLine();
+    ImGui::Text(std::to_string(simboat_presenting_data->rotation.y).c_str());
+    ImGui::Text("  Z: ");
+    ImGui::SameLine();
+    ImGui::Text(std::to_string(simboat_presenting_data->rotation.z).c_str());
+
+    if (!this->simboat_autorun)
+        if (ImGui::Button("Next Tick"))
+            this->simboat_time_tick = true;
+
+    if (ImGui::CollapsingHeader("Set Data"))
+    {
+        ImGui::DragFloat3("Position", simboat_position_set);
+        ImGui::DragFloat3("Velocity", simboat_velocity_set);
+        ImGui::DragFloat3("Acceleration", simboat_acceleration_set);
+        ImGui::DragFloat3("Rotation", simboat_rotation_set);
+        
+        if (ImGui::Button("Set Position")) 
+            should_set_simboat_position = true;  
+        
+        ImGui::SameLine();
+        if (ImGui::Button("Set Velocity")) 
+            should_set_simboat_velocity = true;  
+        
+        ImGui::SameLine();
+        if (ImGui::Button("Set Acceleration")) 
+            should_set_simboat_acceleration = true;
+    
+        if (ImGui::Button("Set Relative Acceleration")) 
+            should_set_simboat_relative_acceleration = true;
+    
+        ImGui::SameLine();
+        if (ImGui::Button("Set Rotation")) 
+            should_set_simboat_rotation = true;
+    }
+    
+    ImGui::End();
+}

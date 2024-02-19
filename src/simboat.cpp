@@ -1,6 +1,21 @@
 #include "simboat.hpp"
 
 #include <math.h>
+#include <raylib.h>
+
+Simboat::Simboat()
+    :
+    rotation(0.0f, 0.0f, 0.0f),    
+    acceleration(0.0f, 0.0f, 0.0f),    
+    velocity(0.0f, 0.0f, 0.0f),    
+    position(0.0f, 0.0f, 0.0f) 
+{
+}
+
+void Simboat::Draw()
+{
+    DrawCube(position, 1.0f, 1.0f, 1.0f, raylib::Color::Blue());
+}
 
 void Simboat::Update_Location(unsigned int miliseconds)
 {
@@ -31,38 +46,9 @@ void Simboat::Set_Relative_Acceleration(raylib::Vector3 acceleration)
     double product_vec_y = R21 * acceleration.x + R22 * acceleration.y + R23 * acceleration.z;
     double product_vec_z = R31 * acceleration.x + R32 * acceleration.y + R33 * acceleration.z;
 
-    acceleration.x = product_vec_x;
-    acceleration.y = product_vec_y;
-    acceleration.z = product_vec_z;
+    this->acceleration.x = product_vec_x;
+    this->acceleration.y = product_vec_y;
+    this->acceleration.z = product_vec_z;
 }
 
-void Simboat::Set_Apsolute_Acceleration(raylib::Vector3 acceleration)
-{
-    this->acceleration = acceleration;
-}
-
-void Simboat::Set_Rotation(raylib::Vector3 rotation)
-{
-    this->rotation = rotation;
-}
-
-raylib::Vector3 Simboat::Get_Rotation()
-{
-    return rotation;
-}
-
-raylib::Vector3 Simboat::Get_Acceleration()
-{
-    return acceleration;
-}
-
-raylib::Vector3 Simboat::Get_Velocity()
-{
-    return velocity;
-}
-
-raylib::Vector3 Simboat::Get_Position()
-{
-    return position;
-}
 

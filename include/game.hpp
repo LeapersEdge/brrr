@@ -4,6 +4,7 @@
 #include "raylib.h"
 #include "raylib-cpp.hpp"
 #include "MyGUI.h"
+#include "simboat.hpp"
 
 class Game
 {
@@ -22,4 +23,6 @@ private:
 
     raylib::Model model;
     raylib::Model model2;
+
+    Simboat simboat;
 };
