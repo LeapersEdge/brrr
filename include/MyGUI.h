@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Color.hpp"
 #include "Vector3.hpp"
 #include "rlImGui.h"
 #include "imgui.h"
@@ -8,6 +9,7 @@
 #include <iostream>
 #include <raylib-cpp.hpp>
 #include "simboat.hpp"
+#include <vector>
 
 class MyGUI
 {
@@ -27,17 +29,17 @@ public:
     // public data -------------------------------------
     bool simboat_autorun = false;
     bool simboat_time_tick = false;
-    Simboat *simboat_presenting_data = nullptr;
+    std::vector<Simboat> *simboat_presenting_data = nullptr;
     
-    float simboat_acceleration_set[3] = {0,0,0};
-    float simboat_velocity_set[3] = {0,0,0};
-    float simboat_position_set[3] = {0,0,0};
-    float simboat_rotation_set[3] = {0,0,0};
-    bool should_set_simboat_acceleration = false;
-    bool should_set_simboat_velocity = false;
-    bool should_set_simboat_position = false;
-    bool should_set_simboat_rotation = false;
-    bool should_set_simboat_relative_acceleration = false;
+    std::vector<Vector3> simboat_set_position;
+    std::vector<Vector3> simboat_set_velocity;
+    std::vector<Vector3> simboat_set_acceleration;
+    std::vector<Vector3> simboat_set_rotation;
+    std::vector<bool> should_set_simboat_acceleration;
+    std::vector<bool> should_set_simboat_velocity;
+    std::vector<bool> should_set_simboat_position;
+    std::vector<bool> should_set_simboat_rotation;
+    std::vector<bool> should_set_simboat_relative_acceleration;
 
 private:
     // private functions -------------------------------

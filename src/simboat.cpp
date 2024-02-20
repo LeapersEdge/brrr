@@ -3,18 +3,19 @@
 #include <math.h>
 #include <raylib.h>
 
-Simboat::Simboat()
+Simboat::Simboat(raylib::Color color)
     :
     rotation(0.0f, 0.0f, 0.0f),    
     acceleration(0.0f, 0.0f, 0.0f),    
     velocity(0.0f, 0.0f, 0.0f),    
-    position(0.0f, 0.0f, 0.0f) 
+    position(0.0f, 0.0f, 0.0f),
+    color(color)
 {
 }
 
 void Simboat::Draw()
 {
-    DrawCube(position, 1.0f, 1.0f, 1.0f, raylib::Color::Blue());
+    DrawCube(position, 1.0f, 1.0f, 1.0f, color); 
 }
 
 void Simboat::Update_Location(unsigned int miliseconds)

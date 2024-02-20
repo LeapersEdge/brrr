@@ -11,8 +11,8 @@ int main() {
     //int screenWidth = GetMonitorWidth(0);
     //int screenHeight = GetMonitorHeight(0);
 
-
-    raylib::Window window(screenWidth, screenHeight, "raylib-cpp - basic window");
+    SetConfigFlags(FLAG_WINDOW_RESIZABLE);
+    raylib::Window window(screenWidth, screenHeight, "brrrr");
 
     SetTargetFPS(60);
 

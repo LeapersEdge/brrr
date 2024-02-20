@@ -5,6 +5,7 @@
 #include "raylib-cpp.hpp"
 #include "MyGUI.h"
 #include "simboat.hpp"
+#include <vector>
 
 class Game
 {
@@ -18,11 +19,13 @@ public:
     void Render();
     void Post_Update();
 private:
+    void Gui_Simboat_Setter_Updates();
+private:
     raylib::Camera3D& cam;
     MyGUI gui;
 
-    raylib::Model model;
-    raylib::Model model2;
+    //raylib::Model model;
+    //raylib::Model model2;
 
-    Simboat simboat;
+    std::vector<Simboat> simboats;
 };

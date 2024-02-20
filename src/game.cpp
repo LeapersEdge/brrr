@@ -5,78 +5,92 @@
 Game::Game(raylib::Camera3D& cam)
     :
     cam(cam),
-    gui(true),
-    model(raylib::Mesh::Cube(1.0f, 1.0f, 1.0f)),
-    model2(raylib::Mesh::Cube(1.0f, 1.0f, 1.0f))
+    gui(true)//,
+    //model(raylib::Mesh::Cube(1.0f, 1.0f, 1.0f)),
+    //model2(raylib::Mesh::Cube(1.0f, 1.0f, 1.0f))
 {
-    model.materials[0].maps[MATERIAL_MAP_DIFFUSE].color = raylib::Color::Blue();
-    model2.materials[0].maps[MATERIAL_MAP_DIFFUSE].color = raylib::Color::Green();
+    //model.materials[0].maps[MATERIAL_MAP_DIFFUSE].color = raylib::Color::Blue();
+    //model2.materials[0].maps[MATERIAL_MAP_DIFFUSE].color = raylib::Color::Green();
 }
 
 void Game::Init()
 {
-    simboat.Set_Relative_Acceleration({1000.0f, 0.0f, 0.0f});
-    gui.simboat_presenting_data = &simboat;
+    gui.simboat_presenting_data = &simboats;
+    simboats.push_back({raylib::Color::Blue()});
+    simboats.push_back({raylib::Color::Green()});
+    simboats[1].position.x = 5;
 }
 
 void Game::Update()
 {
     if (gui.simboat_autorun)
     {   
-        simboat.Update_Location(1);
+        for (int i = 0; i < simboats.size(); i++)
+            simboats[i].Update_Location(1);
     }
     else if (gui.simboat_time_tick)
     {
-        simboat.Update_Location(1);
+        for (int i = 0; i < simboats.size(); i++)
+            simboats[i].Update_Location(1);
         gui.simboat_time_tick = false;
     }
 }
 
 void Game::Render()
 {
-    simboat.Draw();
+    for (int i = 0; i < simboats.size(); i++)
+        simboats[i].Draw();
 }
 
 void Game::Post_Update() 
 {
-    gui.Render();
+    gui.Render();    
+    Gui_Simboat_Setter_Updates();
+}
 
-    if (gui.should_set_simboat_position)
+void Game::Gui_Simboat_Setter_Updates()
+{
+    for (int i = 0; i < gui.simboat_set_acceleration.size(); i++)
     {
-        gui.should_set_simboat_position ^= 1;
-        simboat.position.x = gui.simboat_position_set[0];
-        simboat.position.y = gui.simboat_position_set[1];
-        simboat.position.z = gui.simboat_position_set[2];
-    }
+        if (gui.should_set_simboat_position[i])
+        {
+            bool should_set = gui.should_set_simboat_position[i];
+            should_set ^= 1;
+            gui.should_set_simboat_position[i] = should_set;
+            simboats[i].position = gui.simboat_set_position[i];
+        }
 
-    if (gui.should_set_simboat_velocity)
-    {
-        gui.should_set_simboat_velocity ^= 1;
-        simboat.velocity.x = gui.simboat_velocity_set[0];
-        simboat.velocity.y = gui.simboat_velocity_set[1];
-        simboat.velocity.z = gui.simboat_velocity_set[2];
-    }
+        if (gui.should_set_simboat_velocity[i])
+        {
+            bool should_set = gui.should_set_simboat_velocity[i];
+            should_set ^= 1;
+            gui.should_set_simboat_velocity[i] = should_set;
+            simboats[i].velocity = gui.simboat_set_velocity[i];
+        }
 
-    if (gui.should_set_simboat_acceleration)
-    {
-        gui.should_set_simboat_acceleration ^= 1;
-        simboat.acceleration.x = gui.simboat_acceleration_set[0];
-        simboat.acceleration.y = gui.simboat_acceleration_set[1];
-        simboat.acceleration.z = gui.simboat_acceleration_set[2];
-    }
+        if (gui.should_set_simboat_acceleration[i])
+        {
+            bool should_set = gui.should_set_simboat_acceleration[i];
+            should_set ^= 1;
+            gui.should_set_simboat_acceleration[i] = should_set; 
+            simboats[i].acceleration = gui.simboat_set_acceleration[i];
+        }
 
-    if (gui.should_set_simboat_relative_acceleration)
-    {
-        gui.should_set_simboat_relative_acceleration ^= 1;
-        simboat.Set_Relative_Acceleration({gui.simboat_acceleration_set[0], gui.simboat_acceleration_set[1], gui.simboat_acceleration_set[2]});
-    }
+        if (gui.should_set_simboat_relative_acceleration[i])
+        {
+            bool should_set = gui.should_set_simboat_relative_acceleration[i];
+            should_set ^= 1;
+            gui.should_set_simboat_relative_acceleration[i] = should_set;
+            simboats[i].Set_Relative_Acceleration(gui.simboat_set_acceleration[i]);
+        }
 
-    if (gui.should_set_simboat_rotation)
-    {
-        gui.should_set_simboat_rotation ^= 1;
-        simboat.rotation.x = gui.simboat_rotation_set[0];
-        simboat.rotation.y = gui.simboat_rotation_set[1];
-        simboat.rotation.z = gui.simboat_rotation_set[2];
+        if (gui.should_set_simboat_rotation[i])
+        {
+            bool should_set = gui.should_set_simboat_rotation[i];
+            should_set ^= 1;
+            gui.should_set_simboat_rotation[i] = should_set;
+            simboats[i].rotation = gui.simboat_set_rotation[i];
+        }
     }
-} 
+}
 
