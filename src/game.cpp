@@ -2,9 +2,10 @@
 #include <raylib.h>
 #include <cmath>
 
-Game::Game(raylib::Camera3D& cam)
+Game::Game(raylib::Camera3D& cam1, raylib::Camera3D& cam2)
     :
-    cam(cam),
+    cam1(cam1),
+    cam2(cam2),
     gui(true)//,
     //model(raylib::Mesh::Cube(1.0f, 1.0f, 1.0f)),
     //model2(raylib::Mesh::Cube(1.0f, 1.0f, 1.0f))
@@ -36,7 +37,13 @@ void Game::Update()
     }
 }
 
-void Game::Render()
+void Game::Render_Cam1()
+{
+    for (int i = 0; i < simboats.size(); i++)
+        simboats[i].Draw();
+}
+
+void Game::Render_Cam2()
 {
     for (int i = 0; i < simboats.size(); i++)
         simboats[i].Draw();

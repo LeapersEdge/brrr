@@ -1,5 +1,6 @@
 #include "MyGUI.h"
 #include "imgui.h"
+#include <raylib.h>
 #include <string>
 
 MyGUI::MyGUI(bool dark_theme)
@@ -150,6 +151,8 @@ void MyGUI::Show_Simboat_Data_Info()
     }
 
     ImGui::Begin("Simboat Data");
+
+    ImGui::Text(std::to_string(GetFPS()).c_str());
 
     if (!this->simboat_autorun)
     {

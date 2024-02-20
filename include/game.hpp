@@ -10,18 +10,20 @@
 class Game
 {
 public:
-    Game(raylib::Camera3D& cam);
+    Game(raylib::Camera3D& cam1, raylib::Camera3D& cam2);
 
     void Init();
     void Shutdown();
 
     void Update();
-    void Render();
+    void Render_Cam1();
+    void Render_Cam2();
     void Post_Update();
 private:
     void Gui_Simboat_Setter_Updates();
 private:
-    raylib::Camera3D& cam;
+    raylib::Camera3D& cam1;
+    raylib::Camera3D& cam2;
     MyGUI gui;
 
     //raylib::Model model;
