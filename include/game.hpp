@@ -10,7 +10,7 @@
 class Game
 {
 public:
-    Game(raylib::Camera3D& cam1, raylib::Camera3D& cam2);
+    Game(raylib::Camera2D& cam1, raylib::Camera2D& cam2, unsigned int *screen_width, unsigned int *screen_height);
 
     void Init();
     void Shutdown();
@@ -22,8 +22,10 @@ public:
 private:
     void Gui_Simboat_Setter_Updates();
 private:
-    raylib::Camera3D& cam1;
-    raylib::Camera3D& cam2;
+    unsigned int *screen_width;
+    unsigned int *screen_height;
+    raylib::Camera2D& cam1;
+    raylib::Camera2D& cam2;
     MyGUI gui;
 
     //raylib::Model model;

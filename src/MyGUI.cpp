@@ -56,8 +56,32 @@ void MyGUI::Show_Main_Menu_Bar()
     {
         if (ImGui::BeginMenu("Settings"))
         {
-            if (ImGui::MenuItem("Toggle Autorun"))
+            if (ImGui::MenuItem("Toggle Autorun", NULL, this->simboat_autorun))
                 this->simboat_autorun ^= 1;
+
+            if (ImGui::BeginMenu("Left  Split Screen Projection"))
+            {
+                if (ImGui::MenuItem("X> Y^", NULL, left_split_screen_projection_index == 0))
+                    left_split_screen_projection_index = 0;
+                if (ImGui::MenuItem("X> Z^", NULL, left_split_screen_projection_index == 1))
+                    left_split_screen_projection_index = 1;
+                if (ImGui::MenuItem("Y> Z^", NULL, left_split_screen_projection_index == 2))
+                    left_split_screen_projection_index = 2;
+
+                ImGui::EndMenu();
+            }
+            
+            if (ImGui::BeginMenu("Right Split Screen Projection"))
+            {
+                if (ImGui::MenuItem("X> Y^", NULL, right_split_screen_projection_index == 0))
+                    right_split_screen_projection_index = 0;
+                if (ImGui::MenuItem("X> Z^", NULL, right_split_screen_projection_index == 1))
+                    right_split_screen_projection_index = 1;
+                if (ImGui::MenuItem("Y> Z^", NULL, right_split_screen_projection_index == 2))
+                    right_split_screen_projection_index = 2;
+
+                ImGui::EndMenu();
+            }
 
             ImGui::EndMenu();
         }
@@ -152,17 +176,10 @@ void MyGUI::Show_Simboat_Data_Info()
 
     ImGui::Begin("Simboat Data");
 
-    ImGui::Text(std::to_string(GetFPS()).c_str());
-
     if (!this->simboat_autorun)
     {
-        ImGui::Text("Autorun: disabled");
         if (ImGui::Button("Next Tick"))
             this->simboat_time_tick = true;
-    }
-    else
-    {
-        ImGui::Text("Autorun: enabled");
     }
 
     for (int i = 0; i < simboat_presenting_data->size(); i++)
@@ -216,27 +233,27 @@ void MyGUI::Show_Simboat_Data_Info()
             ImGui::Text(" ");
 
             ImGui::Text("Set Data:");
-            ImGui::DragFloat3("Position", &simboat_set_position[i].x);
-            ImGui::DragFloat3("Velocity", &simboat_set_velocity[i].x);
-            ImGui::DragFloat3("Acceleration", &simboat_set_acceleration[i].x);
-            ImGui::DragFloat3("Rotation", &simboat_set_rotation[i].x);
+            ImGui::DragFloat3(("Boat " + std::to_string(i) + " Position").c_str(), &simboat_set_position[i].x);
+            ImGui::DragFloat3(("Boat " + std::to_string(i) + " Velocity").c_str(), &simboat_set_velocity[i].x);
+            ImGui::DragFloat3(("Boat " + std::to_string(i) + " Acceleration").c_str(), &simboat_set_acceleration[i].x);
+            ImGui::DragFloat3(("Boat " + std::to_string(i) + " Rotation").c_str(), &simboat_set_rotation[i].x);
 
-            if (ImGui::Button("Set Position")) 
+            if (ImGui::Button(("Set Position " + std::to_string(i)).c_str())) 
                 should_set_simboat_position[i] = true;  
 
             ImGui::SameLine();
-            if (ImGui::Button("Set Velocity")) 
+            if (ImGui::Button(("Set Velocity " + std::to_string(i)).c_str())) 
                 should_set_simboat_velocity[i] = true;  
 
             ImGui::SameLine();
-            if (ImGui::Button("Set Acceleration")) 
+            if (ImGui::Button(("Set Acceleration " + std::to_string(i)).c_str())) 
                 should_set_simboat_acceleration[i] = true;
 
-            if (ImGui::Button("Set Relative Acceleration")) 
+            if (ImGui::Button(("Set Relative Acceleration " + std::to_string(i)).c_str())) 
                 should_set_simboat_relative_acceleration[i] = true;
 
             ImGui::SameLine();
-            if (ImGui::Button("Set Rotation")) 
+            if (ImGui::Button(("Set Rotation " + std::to_string(i)).c_str())) 
                 should_set_simboat_rotation[i] = true;
         }
     }

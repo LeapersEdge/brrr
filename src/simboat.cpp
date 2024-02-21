@@ -3,19 +3,64 @@
 #include <math.h>
 #include <raylib.h>
 
+Simboat::Simboat()
+    :
+    rotation(0.0f, 0.0f, 0.0f),    
+    acceleration(0.0f, 0.0f, 0.0f),    
+    velocity(0.0f, 0.0f, 0.0f),    
+    position(0.0f, 0.0f, 0.0f),
+    color(raylib::Color::Blue()),
+    width(25),
+    height(25)
+{
+}
+
 Simboat::Simboat(raylib::Color color)
     :
     rotation(0.0f, 0.0f, 0.0f),    
     acceleration(0.0f, 0.0f, 0.0f),    
     velocity(0.0f, 0.0f, 0.0f),    
     position(0.0f, 0.0f, 0.0f),
-    color(color)
+    color(color),
+    width(25),
+    height(25)
 {
 }
 
-void Simboat::Draw()
+Simboat::Simboat(unsigned int width, unsigned int height, raylib::Color color)
+    :
+    rotation(0.0f, 0.0f, 0.0f),    
+    acceleration(0.0f, 0.0f, 0.0f),    
+    velocity(0.0f, 0.0f, 0.0f),    
+    position(0.0f, 0.0f, 0.0f),
+    color(color),
+    width(width),
+    height(height)
 {
-    DrawCube(position, 1.0f, 1.0f, 1.0f, color); 
+}
+
+void Simboat::DrawXY(unsigned int *screen_width, unsigned int *screen_height)
+{
+    // bitshift >> 1 == devision / 2
+    // need to devide width / 4 because half of the screen is split and middle for each split it in their own halves
+    // no need for (*screen_width >> 2) + (*screen_width >> 1) + position.x for other camera because were still drawing in the same position on texture, were just drawing it elsewhere on screen
+    DrawRectangle((*screen_width >> 2) + position.x, (*screen_height >> 1) - position.y, width, height, color);
+}
+
+void Simboat::DrawXZ(unsigned int *screen_width, unsigned int *screen_height)
+{    
+    // bitshift >> 1 == devision / 2
+    // need to devide width / 4 because half of the screen is split and middle for each split it in their own halves
+    // no need for (*screen_width >> 2) + (*screen_width >> 1) + position.x for other camera because were still drawing in the same position on texture, were just drawing it elsewhere on screen
+    DrawRectangle((*screen_width >> 2) + position.x, (*screen_height >> 1) - position.z, width, height, color);
+}
+
+void Simboat::DrawYZ(unsigned int *screen_width, unsigned int *screen_height)
+{    
+    // bitshift >> 1 == devision / 2
+    // need to devide width / 4 because half of the screen is split and middle for each split it in their own halves
+    // no need for (*screen_width >> 2) + (*screen_width >> 1) + position.x for other camera because were still drawing in the same position on texture, were just drawing it elsewhere on screen
+    DrawRectangle((*screen_width >> 2) + position.y, (*screen_height >> 1) - position.z, width, height, color);
 }
 
 void Simboat::Update_Location(unsigned int miliseconds)

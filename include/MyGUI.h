@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Color.hpp"
 #include "Vector3.hpp"
 #include "rlImGui.h"
 #include "imgui.h"
@@ -41,6 +40,9 @@ public:
     std::vector<bool> should_set_simboat_rotation;
     std::vector<bool> should_set_simboat_relative_acceleration;
 
+    // 0 - XY, 1 - XZ, 2 - YZ
+    int left_split_screen_projection_index = 0;    
+    int right_split_screen_projection_index = 2;    
 private:
     // private functions -------------------------------
     void HelpMarker(const char* desc);
