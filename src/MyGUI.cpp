@@ -59,29 +59,7 @@ void MyGUI::Show_Main_Menu_Bar()
             if (ImGui::MenuItem("Toggle Autorun", NULL, this->simboat_autorun))
                 this->simboat_autorun ^= 1;
 
-            if (ImGui::BeginMenu("Left  Split Screen Projection"))
-            {
-                if (ImGui::MenuItem("X> Y^", NULL, left_split_screen_projection_index == 0))
-                    left_split_screen_projection_index = 0;
-                if (ImGui::MenuItem("X> Z^", NULL, left_split_screen_projection_index == 1))
-                    left_split_screen_projection_index = 1;
-                if (ImGui::MenuItem("Y> Z^", NULL, left_split_screen_projection_index == 2))
-                    left_split_screen_projection_index = 2;
-
-                ImGui::EndMenu();
-            }
             
-            if (ImGui::BeginMenu("Right Split Screen Projection"))
-            {
-                if (ImGui::MenuItem("X> Y^", NULL, right_split_screen_projection_index == 0))
-                    right_split_screen_projection_index = 0;
-                if (ImGui::MenuItem("X> Z^", NULL, right_split_screen_projection_index == 1))
-                    right_split_screen_projection_index = 1;
-                if (ImGui::MenuItem("Y> Z^", NULL, right_split_screen_projection_index == 2))
-                    right_split_screen_projection_index = 2;
-
-                ImGui::EndMenu();
-            }
 
             ImGui::EndMenu();
         }
@@ -151,7 +129,34 @@ void MyGUI::Show_Main_Menu_Bar_View()
             }
             ImGui::EndMenu();
         }
-        
+
+        if (ImGui::BeginMenu("Left  split screen projection"))
+        {
+            if (ImGui::MenuItem("X> Y^", NULL, left_split_screen_projection_index == 0))
+                left_split_screen_projection_index = 0;
+            if (ImGui::MenuItem("X> Z^", NULL, left_split_screen_projection_index == 1))
+                left_split_screen_projection_index = 1;
+            if (ImGui::MenuItem("Y> Z^", NULL, left_split_screen_projection_index == 2))
+                left_split_screen_projection_index = 2;
+
+            ImGui::EndMenu();
+        }
+
+        if (ImGui::BeginMenu("Right split screen projection"))
+        {
+            if (ImGui::MenuItem("X> Y^", NULL, right_split_screen_projection_index == 0))
+                right_split_screen_projection_index = 0;
+            if (ImGui::MenuItem("X> Z^", NULL, right_split_screen_projection_index == 1))
+                right_split_screen_projection_index = 1;
+            if (ImGui::MenuItem("Y> Z^", NULL, right_split_screen_projection_index == 2))
+                right_split_screen_projection_index = 2;
+
+            ImGui::EndMenu();
+        }
+
+        if (ImGui::MenuItem("Toggle show value set options", NULL, show_set_options))
+            show_set_options ^= 1;
+
         ImGui::EndMenu();
     }
 }
@@ -229,6 +234,9 @@ void MyGUI::Show_Simboat_Data_Info()
             ImGui::Text("  Z: ");
             ImGui::SameLine();
             ImGui::Text(std::to_string(simboat_presenting_data->at(i).rotation.z).c_str());
+
+            if (!show_set_options)
+                continue;
 
             ImGui::Text(" ");
 

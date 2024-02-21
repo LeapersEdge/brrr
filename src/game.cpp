@@ -19,9 +19,10 @@ Game::Game(raylib::Camera2D& cam1, raylib::Camera2D& cam2, unsigned int *screen_
 void Game::Init()
 {
     gui.simboat_presenting_data = &simboats;
-    simboats.push_back({raylib::Color::Blue()});
-    simboats.push_back({raylib::Color::Green()});
-    simboats[1].position.x = 5;
+    gui.show_set_options = true;
+    //simboats.push_back({raylib::Color::Blue()});
+    //simboats.push_back({raylib::Color::Green()});
+    //simboats[1].position.x = 5;
 }
 
 void Game::Update()

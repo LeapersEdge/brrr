@@ -23,13 +23,13 @@ private:
     // plz no touch this one variable
     bool open_main_dockspace;
     ImGuiDockNodeFlags main_dockspace_flags;
-
 public:
     // public data -------------------------------------
     bool simboat_autorun = false;
     bool simboat_time_tick = false;
     std::vector<Simboat> *simboat_presenting_data = nullptr;
-    
+
+    bool show_set_options = true;
     std::vector<Vector3> simboat_set_position;
     std::vector<Vector3> simboat_set_velocity;
     std::vector<Vector3> simboat_set_acceleration;
