@@ -2,8 +2,10 @@
 #include <raylib.h>
 #include <cmath>
 
-Game::Game(raylib::Camera3D& cam1, raylib::Camera3D& cam2)
+Game::Game(raylib::Camera2D& cam1, raylib::Camera2D& cam2, unsigned int *screen_width, unsigned int *screen_height)
     :
+    screen_height(screen_height),
+    screen_width(screen_width),
     cam1(cam1),
     cam2(cam2),
     gui(true)//,
@@ -40,13 +42,21 @@ void Game::Update()
 void Game::Render_Cam1()
 {
     for (int i = 0; i < simboats.size(); i++)
-        simboats[i].Draw();
+    {
+        if      (gui.left_split_screen_projection_index == 0)   simboats[i].DrawXY(screen_width, screen_height);
+        else if (gui.left_split_screen_projection_index == 1)   simboats[i].DrawXZ(screen_width, screen_height);
+        else if (gui.left_split_screen_projection_index == 2)   simboats[i].DrawYZ(screen_width, screen_height);
+    }
 }
 
 void Game::Render_Cam2()
 {
     for (int i = 0; i < simboats.size(); i++)
-        simboats[i].Draw();
+    {
+        if      (gui.right_split_screen_projection_index == 0)  simboats[i].DrawXY(screen_width, screen_height);
+        else if (gui.right_split_screen_projection_index == 1)  simboats[i].DrawXZ(screen_width, screen_height);
+        else if (gui.right_split_screen_projection_index == 2)  simboats[i].DrawYZ(screen_width, screen_height);
+    }
 }
 
 void Game::Post_Update() 
@@ -57,7 +67,7 @@ void Game::Post_Update()
 
 void Game::Gui_Simboat_Setter_Updates()
 {
-    for (int i = 0; i < gui.simboat_set_acceleration.size(); i++)
+    for (int i = 0; i < gui.should_set_simboat_acceleration.size(); i++)
     {
         if (gui.should_set_simboat_position[i])
         {
