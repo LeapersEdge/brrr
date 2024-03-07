@@ -7,7 +7,7 @@
 #include <string>
 #include <iostream>
 #include <raylib-cpp.hpp>
-#include "simboat.hpp"
+#include "simbody.hpp"
 #include <vector>
 
 class MyGUI
@@ -27,7 +27,7 @@ public:
     // public data -------------------------------------
     bool simboat_autorun = false;
     bool simboat_time_tick = false;
-    std::vector<Simboat> *simboat_presenting_data = nullptr;
+    std::vector<Simbody*> *simbody_presenting_data = nullptr;
 
     bool show_set_options = true;
     std::vector<Vector3> simboat_set_position;
@@ -42,7 +42,9 @@ public:
 
     // 0 - XY, 1 - XZ, 2 - YZ
     int left_split_screen_projection_index = 0;    
-    int right_split_screen_projection_index = 2;    
+    int right_split_screen_projection_index = 2;   
+
+    unsigned int scene_zoom = 25;
 private:
     // private functions -------------------------------
     void HelpMarker(const char* desc);
@@ -50,8 +52,8 @@ private:
     void Show_Main_Menu_Bar();
     void Show_Main_Menu_Bar_View();
 
-    // currently supports only 1 boat
-    void Show_Simboat_Data_Info();
+    void Show_All_Simbody_Data_Info();
+    void Show_Simbody_Data_Info_Window(Simbody *body, int i);
 public:
     // public functions --------------------------------
     MyGUI(MyGUI &other) = delete;

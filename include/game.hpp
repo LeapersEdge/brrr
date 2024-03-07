@@ -4,8 +4,10 @@
 #include "raylib.h"
 #include "raylib-cpp.hpp"
 #include "MyGUI.h"
-#include "simboat.hpp"
+#include "simbody.hpp"
 #include <vector>
+#include <fstream>
+#include "simboat.hpp"
 
 class Game
 {
@@ -31,5 +33,7 @@ private:
     //raylib::Model model;
     //raylib::Model model2;
 
-    std::vector<Simboat> simboats;
+    Simboat simboat;
+
+    std::vector<Simbody*> simboats;
 };

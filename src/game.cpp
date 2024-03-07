@@ -4,6 +4,7 @@
 
 Game::Game(raylib::Camera2D& cam1, raylib::Camera2D& cam2, unsigned int *screen_width, unsigned int *screen_height)
     :
+    simboat({"csv_data", 25, 25, raylib::Color::Blue(), true}, "sensor_data_lijevo.csv"),
     screen_height(screen_height),
     screen_width(screen_width),
     cam1(cam1),
@@ -18,24 +19,32 @@ Game::Game(raylib::Camera2D& cam1, raylib::Camera2D& cam2, unsigned int *screen_
 
 void Game::Init()
 {
-    gui.simboat_presenting_data = &simboats;
+    gui.simbody_presenting_data = &simboats;
     gui.show_set_options = true;
-    //simboats.push_back({raylib::Color::Blue()});
-    //simboats.push_back({raylib::Color::Green()});
+    simboats.push_back(&simboat.body);
+    //simboats.push_back({"blue", raylib::Color::Blue(), true});
+    //simboats.push_back({"green", raylib::Color::Green()});
     //simboats[1].position.x = 5;
 }
 
 void Game::Update()
 {
     if (gui.simboat_autorun)
-    {   
+    {
+        /*
         for (int i = 0; i < simboats.size(); i++)
-            simboats[i].Update_Location(1);
+            simboats[i]->Update_Location(1);
+        */
+        simboat.Next_Step();
     }
     else if (gui.simboat_time_tick)
     {
+        /*
         for (int i = 0; i < simboats.size(); i++)
-            simboats[i].Update_Location(1);
+            simboats[i]->Update_Location(1);
+            */
+        simboat.Next_Step();
+
         gui.simboat_time_tick = false;
     }
 }
@@ -44,9 +53,9 @@ void Game::Render_Cam1()
 {
     for (int i = 0; i < simboats.size(); i++)
     {
-        if      (gui.left_split_screen_projection_index == 0)   simboats[i].DrawXY(screen_width, screen_height);
-        else if (gui.left_split_screen_projection_index == 1)   simboats[i].DrawXZ(screen_width, screen_height);
-        else if (gui.left_split_screen_projection_index == 2)   simboats[i].DrawYZ(screen_width, screen_height);
+        if      (gui.left_split_screen_projection_index == 0)   simboats[i]->DrawXY(screen_width, screen_height, gui.scene_zoom);
+        else if (gui.left_split_screen_projection_index == 1)   simboats[i]->DrawXZ(screen_width, screen_height, gui.scene_zoom);
+        else if (gui.left_split_screen_projection_index == 2)   simboats[i]->DrawYZ(screen_width, screen_height, gui.scene_zoom);
     }
 }
 
@@ -54,9 +63,9 @@ void Game::Render_Cam2()
 {
     for (int i = 0; i < simboats.size(); i++)
     {
-        if      (gui.right_split_screen_projection_index == 0)  simboats[i].DrawXY(screen_width, screen_height);
-        else if (gui.right_split_screen_projection_index == 1)  simboats[i].DrawXZ(screen_width, screen_height);
-        else if (gui.right_split_screen_projection_index == 2)  simboats[i].DrawYZ(screen_width, screen_height);
+        if      (gui.right_split_screen_projection_index == 0)  simboats[i]->DrawXY(screen_width, screen_height, gui.scene_zoom);
+        else if (gui.right_split_screen_projection_index == 1)  simboats[i]->DrawXZ(screen_width, screen_height, gui.scene_zoom);
+        else if (gui.right_split_screen_projection_index == 2)  simboats[i]->DrawYZ(screen_width, screen_height, gui.scene_zoom);
     }
 }
 
@@ -68,6 +77,11 @@ void Game::Post_Update()
 
 void Game::Gui_Simboat_Setter_Updates()
 {
+    // checks if any updates are to be set from GUI to actual simboats
+    // if there are, the simboats get updated
+    //
+    // TODO: move this to GUI exclusivly since GUI has pointer to this (simbody std::vector)
+    //
     for (int i = 0; i < gui.should_set_simboat_acceleration.size(); i++)
     {
         if (gui.should_set_simboat_position[i])
@@ -75,7 +89,7 @@ void Game::Gui_Simboat_Setter_Updates()
             bool should_set = gui.should_set_simboat_position[i];
             should_set ^= 1;
             gui.should_set_simboat_position[i] = should_set;
-            simboats[i].position = gui.simboat_set_position[i];
+            simboats[i]->position = gui.simboat_set_position[i];
         }
 
         if (gui.should_set_simboat_velocity[i])
@@ -83,7 +97,7 @@ void Game::Gui_Simboat_Setter_Updates()
             bool should_set = gui.should_set_simboat_velocity[i];
             should_set ^= 1;
             gui.should_set_simboat_velocity[i] = should_set;
-            simboats[i].velocity = gui.simboat_set_velocity[i];
+            simboats[i]->velocity = gui.simboat_set_velocity[i];
         }
 
         if (gui.should_set_simboat_acceleration[i])
@@ -91,7 +105,7 @@ void Game::Gui_Simboat_Setter_Updates()
             bool should_set = gui.should_set_simboat_acceleration[i];
             should_set ^= 1;
             gui.should_set_simboat_acceleration[i] = should_set; 
-            simboats[i].acceleration = gui.simboat_set_acceleration[i];
+            simboats[i]->acceleration = gui.simboat_set_acceleration[i];
         }
 
         if (gui.should_set_simboat_relative_acceleration[i])
@@ -99,7 +113,7 @@ void Game::Gui_Simboat_Setter_Updates()
             bool should_set = gui.should_set_simboat_relative_acceleration[i];
             should_set ^= 1;
             gui.should_set_simboat_relative_acceleration[i] = should_set;
-            simboats[i].Set_Relative_Acceleration(gui.simboat_set_acceleration[i]);
+            simboats[i]->Set_Relative_Acceleration(gui.simboat_set_acceleration[i]);
         }
 
         if (gui.should_set_simboat_rotation[i])
@@ -107,7 +121,7 @@ void Game::Gui_Simboat_Setter_Updates()
             bool should_set = gui.should_set_simboat_rotation[i];
             should_set ^= 1;
             gui.should_set_simboat_rotation[i] = should_set;
-            simboats[i].rotation = gui.simboat_set_rotation[i];
+            simboats[i]->rotation = gui.simboat_set_rotation[i];
         }
     }
 }

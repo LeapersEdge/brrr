@@ -1,100 +1,89 @@
 #include "simboat.hpp"
+#include <fstream>
+#include <algorithm>
+#include <iostream>
 
-#include <math.h>
-#include <raylib.h>
+std::vector<std::string> Split_Line_By_Character(const std::string &str, const char &split_char);
+bool is_number(const std::string& s);
 
-Simboat::Simboat()
+Simboat::Simboat(Simbody body, std::string csv_file_name)
     :
-    rotation(0.0f, 0.0f, 0.0f),    
-    acceleration(0.0f, 0.0f, 0.0f),    
-    velocity(0.0f, 0.0f, 0.0f),    
-    position(0.0f, 0.0f, 0.0f),
-    color(raylib::Color::Blue()),
-    width(25),
-    height(25)
+    body(body),
+    current_step(0)
 {
+    std::vector<std::vector<std::string>> csv;
+
+    std::ifstream in(/*csv_file_name.c_str()*/ "sensor_data_lijevo.csv");
+    if (!in.good())
+    {  
+        std::cout << "could not open the file\n";
+        return;
+    }
+
+    while (!in.eof())
+    {
+        std::string line;
+        getline(in, line);
+        csv.push_back(Split_Line_By_Character(line, ','));
+    }
+
+    for (int y = 0; y < csv.size(); y++)
+    {
+        std::vector<double> csv_value_line; 
+        for (int x = 0; x < csv[y].size(); x++)
+        {
+            std::string str = csv[y][x];
+            if (str != "unaccounted for")
+                csv_value_line.push_back(std::stod(str));
+        }
+        if (!csv_value_line.empty())
+            csv_values.push_back(csv_value_line);
+    }
 }
 
-Simboat::Simboat(raylib::Color color)
-    :
-    rotation(0.0f, 0.0f, 0.0f),    
-    acceleration(0.0f, 0.0f, 0.0f),    
-    velocity(0.0f, 0.0f, 0.0f),    
-    position(0.0f, 0.0f, 0.0f),
-    color(color),
-    width(25),
-    height(25)
+void Simboat::Next_Step()
 {
+    if ((current_step + 1) >= csv_values.size())
+    {
+        return;
+    }
+
+    unsigned int delta_time = csv_values[current_step + 1][22] - csv_values[current_step][22];
+    body.Update_Rotation(csv_values[current_step][0], csv_values[current_step][1], csv_values[current_step][2], delta_time);
+    body.Set_Relative_Acceleration(csv_values[current_step][5], csv_values[current_step][6], csv_values[current_step][7]);
+    body.Update_Location(delta_time);
+
+    current_step++;
 }
 
-Simboat::Simboat(unsigned int width, unsigned int height, raylib::Color color)
-    :
-    rotation(0.0f, 0.0f, 0.0f),    
-    acceleration(0.0f, 0.0f, 0.0f),    
-    velocity(0.0f, 0.0f, 0.0f),    
-    position(0.0f, 0.0f, 0.0f),
-    color(color),
-    width(width),
-    height(height)
+std::vector<std::string> Split_Line_By_Character(const std::string &str, const char &split_char)
 {
+    std::vector<std::string> return_vector;
+
+    std::string temp = "";
+    for (int i = 0; i < str.size(); i++)
+    {
+        char c = str[i];
+        if (c != split_char)
+        {    
+            temp += c;
+        }
+        else
+        {
+            return_vector.push_back(temp);
+            temp = "";
+        }
+    }
+
+    if (temp != "")
+        return_vector.push_back(temp);
+
+    return return_vector;
 }
 
-void Simboat::DrawXY(unsigned int *screen_width, unsigned int *screen_height)
+bool is_number(const std::string& s)
 {
-    // bitshift >> 1 == devision / 2
-    // need to devide width / 4 because half of the screen is split and middle for each split it in their own halves
-    // no need for (*screen_width >> 2) + (*screen_width >> 1) + position.x for other camera because were still drawing in the same position on texture, were just drawing it elsewhere on screen
-    DrawRectangle((*screen_width >> 2) + position.x, (*screen_height >> 1) - position.y, width, height, color);
+    return !s.empty() && std::find_if(s.begin(), 
+        s.end(), [](unsigned char c) { return !std::isdigit(c); }) == s.end();
 }
-
-void Simboat::DrawXZ(unsigned int *screen_width, unsigned int *screen_height)
-{    
-    // bitshift >> 1 == devision / 2
-    // need to devide width / 4 because half of the screen is split and middle for each split it in their own halves
-    // no need for (*screen_width >> 2) + (*screen_width >> 1) + position.x for other camera because were still drawing in the same position on texture, were just drawing it elsewhere on screen
-    DrawRectangle((*screen_width >> 2) + position.x, (*screen_height >> 1) - position.z, width, height, color);
-}
-
-void Simboat::DrawYZ(unsigned int *screen_width, unsigned int *screen_height)
-{    
-    // bitshift >> 1 == devision / 2
-    // need to devide width / 4 because half of the screen is split and middle for each split it in their own halves
-    // no need for (*screen_width >> 2) + (*screen_width >> 1) + position.x for other camera because were still drawing in the same position on texture, were just drawing it elsewhere on screen
-    DrawRectangle((*screen_width >> 2) + position.y, (*screen_height >> 1) - position.z, width, height, color);
-}
-
-void Simboat::Update_Location(unsigned int miliseconds)
-{
-    velocity += acceleration * miliseconds / 1000.0f;
-    position += velocity * miliseconds / 1000.0f;
-}
-
-void Simboat::Set_Relative_Acceleration(raylib::Vector3 acceleration)
-{
-    double sin_alpha = sin(rotation.x);
-    double sin_beta  = sin(rotation.y);
-    double sin_gama  = sin(rotation.z);
-    double cos_alpha = cos(rotation.x);
-    double cos_beta  = cos(rotation.y);
-    double cos_gama  = cos(rotation.z);
-
-    double R11 = cos_beta * cos_gama;
-    double R12 = sin_alpha * sin_beta * cos_gama - cos_alpha * sin_gama;
-    double R13 = cos_alpha * sin_beta * cos_gama + sin_alpha * sin_gama;
-    double R21 = cos_beta * sin_gama;
-    double R22 = sin_alpha * sin_beta * sin_gama + cos_alpha * cos_gama;
-    double R23 = cos_alpha * sin_beta * sin_gama - sin_alpha * cos_gama;
-    double R31 = -sin_gama;
-    double R32 = sin_alpha * cos_beta;
-    double R33 = cos_alpha * cos_beta;
-
-    double product_vec_x = R11 * acceleration.x + R12 * acceleration.y + R13 * acceleration.z;
-    double product_vec_y = R21 * acceleration.x + R22 * acceleration.y + R23 * acceleration.z;
-    double product_vec_z = R31 * acceleration.x + R32 * acceleration.y + R33 * acceleration.z;
-
-    this->acceleration.x = product_vec_x;
-    this->acceleration.y = product_vec_y;
-    this->acceleration.z = product_vec_z;
-}
-
 
